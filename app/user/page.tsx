@@ -50,19 +50,20 @@ export default function Home() {
   }
   return (
     <>
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen ">
       {!isLoading && !user && (
         <>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
-            Welcome to CodeFigma
+            Welcome to WDAT Syllabus
           </h1>
-          <p className="text-lg mb-8">A collaborative coding platform.</p>
+          <p className="text-lg mb-8">Empower your learning journey with our comprehensive web development
+            syllabus app. </p>
           <div className="flex">
             <a
               href="/api/auth/login"
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4"
             >
-              Sign In
+              Sign In as a user
             </a>
           </div>
         </>

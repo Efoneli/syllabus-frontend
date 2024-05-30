@@ -1,47 +1,77 @@
 
-import { Suspense } from "react";
-import UserProfile from "../components/user-profile";
-import { Carousel } from "flowbite-react";
-import arif from "../assests/arif.jpg";
-import Avatar from "../assests/Avatar.png";
-import brook from "../assests/brook.jpg";
-import christopher from "../assests/christopher.jpg";
-import joshua from "../assests/joshua.jpg";
-import window from "../assests/arif.jpg";
-import Image from "next/image";
+"use client";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { useEffect, useState } from "react";
+import { getSession } from "@auth0/nextjs-auth0";
 
-export default async function DashbaordPage() {
+export default function Home() {
+  const { user, isLoading } = useUser();
+  const router = useRouter();
+  const [showLoginPrompt, setShowLoginPrompt] = useState(true);
+  useEffect(() => {
+    if (user) {
+      router.push('/admin/admin_dashboard');
+    }
+  }, [isLoading, user, router]);
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      console.log("user changed in some way")
+        // Fetch the token from your Auth0 on the client-side or via an API route
+        fetch('/api/auth/token')
+        .then(response => response.json())
+        .then(data => {
+          console.log(data, "this good")
+            localStorage.setItem('accessToken', data.accessToken);
+        });
+    }
+}, [user, isLoading, router]);
+
+
+  // useEffect(() => {
+  //   const fetchTokenAndRedirect = async () => {
+  //     if (user) {
+  //       const session = await getSession(); // Get the session to access the token
+  //       console.log(session, "session")
+  //       if (session?.accessToken) {
+  //         localStorage.setItem('accessToken', session.accessToken); // Store the access token in local storage
+  //       }
+  //       router.replace('/dashboard');
+  //     }
+  //   };
+
+  //   fetchTokenAndRedirect();
+  // }, [user, router]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
   return (
-    <div>
-      <div className='bg-[#f5f5f5] border-b border-gray-900'>
-      <Suspense fallback="Loading user!!!">
-        <UserProfile />
-      </Suspense>
-      </div>
-      <div className="p-12">
-        <div>
-          <h1 className="text-3xl mb-4 text-gray-300">
-            Welcome to WDAT Syllabus{" "}
+    <>
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      {!isLoading && !user && (
+        <>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
+            Welcome to WDAT Syllabus
           </h1>
-          <p className="text-md mb-4 text-gray-300">
-            Empower your learning journey with our comprehensive web development
-            syllabus app. Whether you're a student, educator, or lifelong
-            learner, WDAT is here to streamline your study experience and help
-            you achieve your web dev goals.
-          </p>
-        </div>
-
-        <div className="h-60 sm:h-64 xl:h-80 2xl:h-96">
-          <Carousel>
-            <Image height={300} width={300} src={arif} alt="..." />
-            <Image height={300} width={300} src={joshua} alt="..." />
-            <Image height={300} width={300} src={brook} alt="..." />
-            <Image height={300} width={300} src={christopher} alt="..." />
-            <Image height={300} width={300} src={joshua} alt="..." />
-            <Image height={300} width={300} src={window} alt="..." />
-          </Carousel>
-        </div>
-      </div>{" "}
+          <p className="text-lg mb-8">Empower your learning journey with our comprehensive web development
+            syllabus app. </p>
+          <div className="flex">
+            <a
+              href="/api/auth/login"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4"
+            >
+              Sign In as admin
+            </a>
+          </div>
+        </>
+      )}
     </div>
+  </>
+    
+     
+      
   );
 }

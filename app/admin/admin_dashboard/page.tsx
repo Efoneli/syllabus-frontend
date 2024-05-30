@@ -1,19 +1,19 @@
 import { Suspense } from "react";
-import UserProfile from "../components/user-profile";
+import UserProfile from "../../components/user-profile";
 import { Carousel } from "flowbite-react";
-import arif from "../assests/arif.jpg";
-import Avatar from "../assests/Avatar.png";
-import brook from "../assests/brook.jpg";
-import christopher from "../assests/christopher.jpg";
-import joshua from "../assests/joshua.jpg";
-import window from "../assests/arif.jpg";
+import arif from "../../assests/arif.jpg";
+import Avatar from "../../assests/Avatar.png";
+import brook from "../../assests/brook.jpg";
+import christopher from "../../assests/christopher.jpg";
+import joshua from "../../assests/joshua.jpg";
+import window from "../../assests/arif.jpg";
 import Image from "next/image";
 
 export default async function DashbaordPage() {
   return (
     <div>
       <div className='bg-[#F2613F]'>
-      <Suspense fallback="Loading user!!!">
+      <Suspense fallback="Loading admin!!!">
         <UserProfile />
       </Suspense>
       </div>

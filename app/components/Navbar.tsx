@@ -40,7 +40,7 @@ function Navbar({ children }: NavbarProps) {
   };
 
   const handleCategoryChange = (category: Category) => {
-    router.push(`/admin/categories/${category.id}`);
+    router.push(`/admin/admin_dashboard/categories/${category.id}`);
     toggleCategoryMenu();
   };
 
@@ -79,7 +79,7 @@ function Navbar({ children }: NavbarProps) {
           <ul className="space-y-2 font-medium">
             <li>
               <Link
-                href="/admin"
+                href="/admin/admin_dashboard"
                 className="flex items-center p-2 text-gray-200 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
                 <DashboardSvg />
@@ -88,7 +88,7 @@ function Navbar({ children }: NavbarProps) {
             </li>
             <li>
               <Link
-                href="/admin/inbox"
+                href="/admin/admin_dashboard/inbox"
                 className="flex items-center p-2 text-gray-200 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
                 <InboxSvg />
@@ -134,7 +134,7 @@ function Navbar({ children }: NavbarProps) {
                 {categories.map((category, index) => (
                   <li key={index}>
                     <Link
-                      href={`/admin/categories/${category.id}`}
+                      href={`/admin/admin_dashboard/categories/${category.id}`}
                       passHref
                       onClick={() => handleCategoryChange(category)}
                       className="block px-4 py-2 text-sm text-gray-200 rounded-lg dark:text-white hover:bg-gray-700 dark:hover:bg-gray-600"
