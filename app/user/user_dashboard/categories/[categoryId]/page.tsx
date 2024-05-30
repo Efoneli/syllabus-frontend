@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import Ratings from '../../../../components/Ratings';
-import placeholder from '../../../../assests/placeholder.jpg'
+import placeholder from '../../../../assets/placeholder.jpg'
 
 interface Course {
   id: number;
