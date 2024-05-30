@@ -1,12 +1,12 @@
 import { Suspense } from "react";
 import UserProfile from "../../components/user-profile";
 import { Carousel } from "flowbite-react";
-import arif from "../../assests/arif.jpg";
-import Avatar from "../../assests/Avatar.png";
-import brook from "../../assests/brook.jpg";
-import christopher from "../../assests/christopher.jpg";
-import joshua from "../../assests/joshua.jpg";
-import window from "../../assests/arif.jpg";
+import arif from "../../assets/arif.jpg";
+import Avatar from "../../assets/Avatar.png";
+import brook from "../../assets/brook.jpg";
+import christopher from "../../assets/christopher.jpg";
+import joshua from "../../assets/joshua.jpg";
+import window from "../../assets/arif.jpg";
 import Image from "next/image";
 
 export default async function DashbaordPage() {
