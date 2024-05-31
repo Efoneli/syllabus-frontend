@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Avatar from '../../assets/undrawwaiting.svg'
+import Avatar from '../../../assets/undrawwaiting.svg'
 
 export default function Inbox () {
     return(   

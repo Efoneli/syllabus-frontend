@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import UserProfile from "../../components/user-profile";
 import { Carousel } from "flowbite-react";
 import arif from "../../assets/arif.jpg";
-import Avatar from "../../assets/Avatar.png";
 import brook from "../../assets/brook.jpg";
 import christopher from "../../assets/christopher.jpg";
 import joshua from "../../assets/joshua.jpg";
@@ -25,7 +24,7 @@ export default async function DashbaordPage() {
           </h1>
           <p className="text-md mb-4 text-gray-300">
             Empower your learning journey with our comprehensive web development
-            syllabus app. Whether you're a student, educator, or lifelong
+            syllabus app. Whether you&apos;re a student, educator, or lifelong
             learner, WDAT is here to streamline your study experience and help
             you achieve your web dev goals.
           </p>
