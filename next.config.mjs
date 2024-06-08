@@ -8,9 +8,13 @@ const nextConfig = {
         "miro.medium.com",
         "lh3.googleusercontent.com",
         "banner2.cleanpng.com",
+        "pbs.twimg.com",
+        's.gravatar.com',
       ],
     },
   };
   
   export default nextConfig;
+
+  
   

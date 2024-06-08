@@ -13,16 +13,14 @@ export default async function DashbaordPage() {
   return (
     <div>
       <div className='bg-[#f5f5f5] border-b border-gray-900'>
-      <Suspense fallback="Loading user!!!">
-        <UserProfile />
-      </Suspense>
+     
       </div>
       <div className="p-12">
         <div>
-          <h1 className="text-3xl mb-4 text-gray-300">
+          <h1 className="text-3xl font-semibold  mb-4 text-gray-800">
             Welcome to WDAT Syllabus{" "}
           </h1>
-          <p className="text-md mb-4 text-gray-300">
+          <p className="text-md mb-4 text-gray-700">
             Empower your learning journey with our comprehensive web development
             syllabus app. Whether you&apos;re a student, educator, or lifelong
             learner, WDAT is here to streamline your study experience and help

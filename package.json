@@ -10,12 +10,16 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.5.0",
+    "@stripe/stripe-js": "^3.5.0",
     "axios": "^1.6.8",
     "flowbite-react": "^0.9.0",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
-    "sharp": "^0.33.4"
+    "sharp": "^0.33.4",
+    "stripe": "^15.9.0"
   },
   "devDependencies": {
     "@types/node": "^20",

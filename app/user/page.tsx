@@ -1,63 +1,87 @@
-
 "use client";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { useEffect, useState } from "react";
-import { getSession } from "@auth0/nextjs-auth0";
+import { useEffect } from "react";
+import axios from 'axios';
 
 export default function Home() {
   const { user, isLoading } = useUser();
   const router = useRouter();
-  const [showLoginPrompt, setShowLoginPrompt] = useState(true);
+
   useEffect(() => {
     if (user) {
-      router.push('/user/user_dashboard');
+      router.replace('/user/user_dashboard');
     }
   }, [isLoading, user, router]);
 
   useEffect(() => {
     if (!isLoading && user) {
-      console.log("user changed in some way")
-        // Fetch the token from your Auth0 on the client-side or via an API route
-        fetch('/api/auth/token')
-        .then(response => response.json())
-        .then(data => {
-          console.log(data, "this good")
-            localStorage.setItem('accessToken', data.accessToken);
+      console.log("User authenticated with Auth0");
+
+      // Fetch the token from Auth0
+      axios.get('/api/auth/token')
+        .then(response => {
+          const data = response.data;
+          console.log(data, "Fetched Auth0 token");
+          const accessToken = data.accessToken;
+          localStorage.setItem('accessToken', accessToken);
+
+          // Decode the token to get user details (if necessary)
+          const decodedToken = jwt.decode(accessToken);
+
+          // Create user in backend
+          axios.post('http://localhost:3030/users', {
+            name: user.name,
+            email: user.email,
+            sub: user.sub,
+          }, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`
+            }
+          })
+          .then(response => {
+            console.log('Response status:', response.status); // Log the response status
+            console.log("User created in backend:", response.data);
+          })
+          .catch(error => {
+            if (error.response) {
+              // Request made and server responded
+              console.error('Error creating user in backend:', error.response.data);
+              if (error.response.status === 409) {
+                console.error('User already exists');
+              } else {
+                console.error(`Failed to create user: ${error.response.data}`);
+              }
+            } else if (error.request) {
+              // The request was made but no response was received
+              console.error('Error creating user in backend: No response received');
+            } else {
+              // Something happened in setting up the request that triggered an Error
+              console.error('Error creating user in backend:', error.message);
+            }
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching Auth0 token:", error);
         });
     }
-}, [user, isLoading, router]);
-
-
-  // useEffect(() => {
-  //   const fetchTokenAndRedirect = async () => {
-  //     if (user) {
-  //       const session = await getSession(); // Get the session to access the token
-  //       console.log(session, "session")
-  //       if (session?.accessToken) {
-  //         localStorage.setItem('accessToken', session.accessToken); // Store the access token in local storage
-  //       }
-  //       router.replace('/dashboard');
-  //     }
-  //   };
-
-  //   fetchTokenAndRedirect();
-  // }, [user, router]);
+  }, [user, isLoading, router]);
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
   return (
-    <>
-    <div className="flex flex-col items-center justify-center min-h-screen ">
+    <div className="flex flex-col items-center justify-center min-h-screen">
       {!isLoading && !user && (
         <>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
             Welcome to WDAT Syllabus
           </h1>
-          <p className="text-lg mb-8">Empower your learning journey with our comprehensive web development
-            syllabus app. </p>
+          <p className="text-lg mb-8">
+            Empower your learning journey with our comprehensive web development syllabus app.
+          </p>
           <div className="flex">
             <a
               href="/api/auth/login"
@@ -69,9 +93,5 @@ export default function Home() {
         </>
       )}
     </div>
-  </>
-    
-     
-      
   );
 }

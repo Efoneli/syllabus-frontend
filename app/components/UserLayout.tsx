@@ -8,6 +8,7 @@ interface GlobalLayoutProps {
 export default function GlobalLayout({ children }: GlobalLayoutProps) {
   return (
     <>
+    
       <Navbar>{children}</Navbar>
     </>
   );

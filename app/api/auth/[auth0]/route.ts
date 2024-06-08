@@ -1,25 +1,17 @@
 // // app/api/auth/[auth0]/route.js
-// import { handleAuth, handleLogin } from '@auth0/nextjs-auth0';
+// import { handleAuth, handleLogin, handleLogout } from '@auth0/nextjs-auth0';
 
 // export const GET = handleAuth({
 //     login: handleLogin({
 //         authorizationParams: {
-//             audience: "auth0-test-api"
+//             audience: "new_Syllabus"
 //         }
-//     }) 
+//     }) ,
+//     logout: handleLogout()
 // });
 
 
-import { handleAuth, handleLogin } from "@auth0/nextjs-auth0";
+// app/api/auth/[auth0]/route.js
+import { handleAuth } from '@auth0/nextjs-auth0';
 
-export const GET = handleAuth({
-  login: handleLogin({
-    returnTo: "/profile",
-  }),
-  signup: handleLogin({
-    authorizationParams: {
-      screen_hint: "signup",
-    },
-    returnTo: "/profile",
-  }),
-});
+export const GET = handleAuth();

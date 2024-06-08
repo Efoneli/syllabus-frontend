@@ -310,7 +310,7 @@ export default function CourseDetail() {
   };
 
   return (
-    <div className="p-6 min-w-sm relative">
+    <div className="p-6 min-w-sm relative  bg-gray-900">
       <button
         className="absolute top-4 right-4 bg-blue-500 text-white py-1.5 px-3 rounded"
         onClick={() => setShowModal(true)}
@@ -380,7 +380,7 @@ export default function CourseDetail() {
 
       {topics.length > 0 ? (
         topics.map((topic) => (
-          <div key={topic.id} className="mb-6 flex flex-col items-center justify-center">
+          <div key={topic.id} className="max-w-md mb-6 flex flex-col items-start justify-start">
             <h2 className="text-3xl font-semibold mb-2">{topic.title}</h2>
             <Image
               width={200}
@@ -391,13 +391,14 @@ export default function CourseDetail() {
             />
             <p className="">{topic.content}</p>
             <div className="mt-4">
+              <p className='my-3'>View {topic.title} Documentation here:👇</p>
               <a
                 href={topic.docsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500 font-semibold hover:underline"
               >
-                {topic.docsUrl}
+                 {topic.docsUrl}
               </a>
               <br />
               <iframe

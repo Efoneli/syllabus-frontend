@@ -69,10 +69,10 @@ function Navbar({ children }: NavbarProps) {
         id="logo-sidebar"
         className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${
           isOpen || isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } bg-gray-900 border-r border-gray-200 sm:translate-x-0 dark:bg-[#32012F] dark:border-gray-700`}
+        } bg-gray-900 border-r border-gray-200 sm:translate-x-0 dark:bg-[#0B2447] dark:border-gray-700`}
         aria-label="Sidebar"
       >
-        <div className="min-h-screen px-3 pb-4 overflow-y-auto bg-[#32012F] text-gray-100 dark:bg-[#32012F]">
+        <div className="min-h-screen px-3 pb-4 overflow-y-auto bg-[#0B2447] text-gray-100 dark:bg-[#0B2447]">
           <span className=" top-0 left-10 w-50 self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
             WDAT
           </span>
@@ -167,7 +167,7 @@ function Navbar({ children }: NavbarProps) {
         </div>
       </aside>
 
-      <div className=" min-h-screen ml-0 md:ml-64">
+      <div className="bg-gray-900 min-h-screen ml-0 md:ml-64">
         {children}
       </div>
     </div>

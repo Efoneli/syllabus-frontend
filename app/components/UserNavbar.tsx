@@ -1,11 +1,13 @@
 
 "use client";
 
-import React, { ReactNode, useState, useEffect } from "react";
+import React, { ReactNode, useState, useEffect, Suspense } from "react";
 import axios from "axios";
 import { CiMenuFries } from "react-icons/ci";
 import { useRouter } from "next/navigation";
 import Link from 'next/link'
+import UserProfile from "./user-profile";
+import Header from "./Header";
 
 interface NavbarProps {
   children: ReactNode;
@@ -59,6 +61,11 @@ function Navbar({ children }: NavbarProps) {
 
   return (
     <div>
+
+<Suspense fallback="Loading user!!!">
+        <Header />
+      </Suspense>
+
       <button
         className="block md:hidden fixed top-3 left-3 z-50 text-white"
         onClick={toggleMobileSidebar}
@@ -70,10 +77,10 @@ function Navbar({ children }: NavbarProps) {
         id="logo-sidebar"
         className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${
           isOpen || isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } bg-gray-900 border-r border-gray-200 sm:translate-x-0 dark:bg-[#32012F] dark:border-gray-700`}
+        } bg-gray-900 border-r border-gray-200 sm:translate-x-0 dark:bg-[#01204E] dark:border-gray-700`}
         aria-label="Sidebar"
       >
-        <div className="min-h-screen px-3 pb-4 overflow-y-auto bg-[#32012F] text-gray-100 dark:bg-[#32012F]">
+        <div className="min-h-screen px-3 pb-4 overflow-y-auto bg-[#01204E] text-gray-100 dark:bg-[#01204E]">
           <span className=" top-0 left-10 w-50 self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
             WDAT
           </span>
@@ -99,15 +106,7 @@ function Navbar({ children }: NavbarProps) {
                 </span>
               </Link>
             </li>
-            {/* <li>
-              <Link
-                href="schedule"
-                className="flex items-center p-2 text-gray-200 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                <ScheduleSvg />
-                <span className="flex-1 ms-3 whitespace-nowrap">Schedule</span>
-              </Link>
-            </li> */}
+         
             <li>
               <div
                 onClick={toggleCategoryMenu}
@@ -138,7 +137,7 @@ function Navbar({ children }: NavbarProps) {
                       href={`/user/user_dashboard/categories/${category.id}`}
                       passHref
                       onClick={() => handleCategoryChange(category)}
-                      className="block bg-red-500 px-4 py-2 text-sm text-gray-200 rounded-lg dark:text-white hover:bg-gray-700 dark:hover:bg-gray-600"
+                      className="block  px-4 py-2 text-sm text-gray-200 rounded-lg dark:text-white hover:bg-gray-700 dark:hover:bg-gray-600"
                     >
                       {category.name}
                     </Link>
@@ -146,29 +145,12 @@ function Navbar({ children }: NavbarProps) {
                 ))}
               </ul>
             </li>
-            {/* <li>
-              <Link
-                href="/assignments"
-                className="flex items-center p-2 text-gray-200 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                <AssignmentSvg />
-                <span className="flex-1 ms-3 whitespace-nowrap">Assignments</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="grade"
-                className="flex items-center p-2 text-gray-200 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                <GradeSvg />
-                <span className="flex-1 ms-3 whitespace-nowrap">Grade</span>
-              </Link>
-            </li> */}
+         
           </ul>
         </div>
       </aside>
 
-      <div className=" min-h-screen ml-0 md:ml-64">
+      <div className="bg-[#f5f5f5] min-h-screen ml-0 md:ml-64">
         {children}
       </div>
     </div>

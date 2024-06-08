@@ -1,99 +1,113 @@
-
-
 'use client';
 import { useRouter } from "next/navigation";
-// import { useUser } from "@auth0/nextjs-auth0/client";
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import {jwtDecode} from 'jwt-decode';
 
 export default function Home() {
-  // const { user, isLoading } = useUser();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [isSigninModalOpen, setIsSigninModalOpen] = useState(false);
+  const { user, isLoading } = useUser();
+  const [permissions, setPermissions] = useState([]);
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
   };
 
-  const toggleSigninModal = () => {
-    setIsSigninModalOpen(!isSigninModalOpen);
-  };
-  
-  // useEffect(() => {
-  //   if (user) {
-  //     router.replace('/dashboard');
-  //   }
-  // }, [isLoading, user, router]);
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
+  console.log(user, 'user from console')
+
+  useEffect(() => {
+    if (user !== undefined && Object.keys(user).length !== 0) {
+      console.log("User authenticated with Auth0");
+
+      fetch('/api/access')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch Auth0 token: ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log(data, "Fetched Auth0 token");
+          localStorage.setItem('accessToken', data.accessToken);
+
+          // Decode the JWT token to get the user's permissions
+          const decodedToken = jwtDecode(data.accessToken);
+          const userPermissions = decodedToken?.permissions || [];
+          // setPermissions(userPermissions);
+          localStorage.setItem('permissions', JSON.stringify(userPermissions));
+
+          // Create user in backend
+          return fetch('http://localhost:3030/users', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${data.accessToken}`
+            },
+            body: JSON.stringify({
+              name: user.name,
+              email: user.email,
+              sub: user.sub,
+            })
+          });
+        })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else if (response.status === 409) {
+            throw new Error('User already exists');
+          } else {
+            throw new Error(`Failed to create user: ${response.statusText}`);
+          }
+        })
+        .then(data => {
+          console.log("User created in backend:", data);
+        })
+
+        .catch(error => {
+          console.error("Error:", error.message);
+        });
+        router.replace('/user/user_dashboard');
+    } else{
+      router.replace('/api/auth/login');
+    }
+    
+  }, [user]);
+
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-      <div className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 dark:from-inherit lg:dark:bg-zinc-800/30">
-      <p>
-        Get started by &nbsp;
-        <code className="font-mono font-bold">
-          <div className="relative inline-block">
-            <button
-              onClick={toggleSigninModal}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4"
-              type="button"
-            >
-              Sign In
-            </button>
+        <div className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 dark:from-inherit lg:dark:bg-zinc-800/30">
+          <p>
+            Get started by &nbsp;
+            <div className="relative inline-block">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4" type="button">
+                <a href="/api/auth/login" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4">
+                  Sign In
+                </a>
+              </button>
+            </div>
+          </p>
+        </div>
 
-            {isSigninModalOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 z-20">
-                <button
-                  onClick={() => router.push('/admin')}
-                  className="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                >
-                  Login as an Admin
-                </button>
-                <button
-                  onClick={() => router.push('/user')}
-                  className="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                >
-                  Login as a User
-                </button>
-              </div>
-            )}
-          </div>
-        </code>
-      </p>
-    </div>
-
-        <button 
-          onClick={toggleModal} 
-          data-modal-target="crud-modal" 
-          data-modal-toggle="crud-modal" 
-          className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" 
-          type="button"
-        >
-         Apply for internship
+        <button onClick={toggleModal} className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          Apply for internship
         </button>
-        
+
         {isOpen && (
-          <div 
-            id="crud-modal" 
-            aria-hidden={!isOpen} 
-            className={`fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full ${!isOpen ? 'hidden' : 'flex'}`}
-          >
+          <div id="crud-modal" aria-hidden={!isOpen} className={`fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full ${!isOpen ? 'hidden' : 'flex'}`}>
             <div className="relative p-4 w-full max-w-md max-h-full">
               <div className="relative bg-white rounded-lg shadow dark:bg-gray-900">
                 <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                     Apply for our Internship
                   </h3>
-                  <button 
-                    type="button" 
-                    className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" 
-                    onClick={toggleModal}
-                  >
+                  <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" onClick={toggleModal}>
                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                       <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                     </svg>
@@ -109,17 +123,17 @@ export default function Home() {
                       <input type="text" name="name" id="name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Input name here" />
                     </div>
                     <div className="col-span-2 sm:col-span-1">
-                      <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                      <input type="email" name="price" id="price" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Input email here" />
+                      <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                      <input type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Input email here" />
                     </div>
                     <div className="col-span-2 sm:col-span-1">
                       <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
                       <select id="category" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        <option >Select a category</option>
-                        <option value="TV">Frontend</option>
-                        <option value="PC">Backend</option>
-                        <option value="GA">Mobile</option>
-                        <option value="PH">Fullstack</option>
+                        <option>Select a category</option>
+                        <option value="Frontend">Frontend</option>
+                        <option value="Backend">Backend</option>
+                        <option value="Mobile">Mobile</option>
+                        <option value="Fullstack">Fullstack</option>
                       </select>
                     </div>
                     <div className="col-span-2">
@@ -145,51 +159,26 @@ export default function Home() {
       </div>
 
       <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <div
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about tech stacks using their docs.
-          </p>
+        <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
+          <h2 className="mb-3 text-2xl font-semibold">Docs</h2>
+          <p className="m-0 max-w-[30ch] text-sm opacity-50">Find in-depth information about tech stacks using their docs.</p>
         </div>
 
-        <div
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Web development in an interactive courses with videos!
-          </p>
+        <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
+          <h2 className="mb-3 text-2xl font-semibold">Learn</h2>
+          <p className="m-0 max-w-[30ch] text-sm opacity-50">Learn about Web development in an interactive courses with videos!</p>
         </div>
 
-        <div
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Videos
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter videos for videos.
-          </p>
+        <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
+          <h2 className="mb-3 text-2xl font-semibold">Videos</h2>
+          <p className="m-0 max-w-[30ch] text-sm opacity-50">Explore starter videos for videos.</p>
         </div>
 
-        <div
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Projects
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Build and deploy your project to a shareable URL with Vercel.
-          </p>
+        <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
+          <h2 className="mb-3 text-2xl font-semibold">Projects</h2>
+          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">Build and deploy your project to a shareable URL with Vercel.</p>
         </div>
       </div>
     </main>
   );
 }
-
