@@ -68,9 +68,10 @@ export default function Home() {
           console.error("Error:", error.message);
         });
         router.replace('/user/user_dashboard');
-    } else{
-      router.replace('/api/auth/login');
-    }
+    } 
+    // else{
+    //   router.replace('/api/auth/login');
+    // }
     
   }, [user]);
 

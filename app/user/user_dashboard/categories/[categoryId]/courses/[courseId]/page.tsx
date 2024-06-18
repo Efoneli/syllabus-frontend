@@ -78,12 +78,16 @@
 //   );
 // }
 
+
+
+
 "use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { hasPermission } from "../../../../../../utils";
+import { CiCirclePlus } from "react-icons/ci";
 
 interface Topic {
   id: number;
@@ -92,7 +96,7 @@ interface Topic {
   imageUrl: string;
   docsUrl: string;
   courseId: number;
-  videoUrl: string;
+  videoUrl?: string;
 }
 
 export default function CourseDetail() {
@@ -108,7 +112,6 @@ export default function CourseDetail() {
     imageUrl: "",
     docsUrl: "",
     courseId: parseInt(courseId, 10),
-    videoUrl: "",
   });
   const [isEditing, setIsEditing] = useState(false);
   const [editTopic, setEditTopic] = useState<Topic | null>(null);
@@ -167,7 +170,6 @@ export default function CourseDetail() {
         imageUrl: "",
         docsUrl: "",
         courseId: parseInt(courseId, 10),
-        videoUrl: "",
       });
       setShowModal(false); // Close the modal after adding the topic
     } catch (error) {
@@ -188,16 +190,13 @@ export default function CourseDetail() {
             },
           }
         );
-        // setTopics(
-        //   topics.map((topic) => (topic.id === editTopic.id ? editTopic : topic))
-        // );
         const updatedTopic = response.data;
         setTopics(topics.map(topic => {
           if(topic.id === updatedTopic.id) {
-            return updatedTopic
+            return updatedTopic;
           }
-          return topic
-        }))
+          return topic;
+        }));
         setEditTopic(null);
         setIsEditing(false);
         setShowModal(false); // Close the modal after editing the topic
@@ -216,19 +215,30 @@ export default function CourseDetail() {
     }
   };
 
+  const extractYouTubeVideoID = (url?: string) => {
+    if (!url) return null;
+    const regExp = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = url.match(regExp);
+    return match ? match[1] : null;
+  };
+
   return (
-    <div className="p-6 min-w-sm relative  bg-gray-900">
-      <button
-        className="absolute top-4 right-4 bg-blue-500 text-green-400 py-1.5 px-3 rounded"
-        onClick={() => setShowModal(true)}
-      >
-        <span className="text-xl">+</span>
-      </button>
+    <div className="p-6 min-w-sm relative bg-gray-900">
+      {hasPermission("read:topics") && (
+        <button
+          className="absolute top-4 right-4 py-1.5 px-3 rounded"
+          onClick={() => setShowModal(true)}
+        >
+          <span className="text-4xl">
+            <CiCirclePlus />
+          </span>
+        </button>
+      )}
 
       {showModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white p-6 flex flex-col rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-2">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center p-4 sm:p-6">
+          <div className="bg-white p-4 sm:p-6 flex flex-col rounded-lg shadow-lg w-full max-w-md sm:max-w-lg">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-center">
               {isEditing ? "Edit Topic" : "Add New Topic"}
             </h2>
             <input
@@ -237,125 +247,123 @@ export default function CourseDetail() {
               placeholder="Title"
               value={isEditing && editTopic ? editTopic.title : newTopic.title}
               onChange={handleInputChange}
-              className="mb-2 p-2 border text-gray-800"
-            />
-            <input
-              type="text"
-              name="content"
-              placeholder="Content"
-              value={
-                isEditing && editTopic ? editTopic.content : newTopic.content
-              }
-              onChange={handleInputChange}
-              className="mb-2 p-2 border text-gray-800"
+              className="mb-3 p-2 border rounded text-gray-800"
             />
             <input
               type="text"
               name="imageUrl"
               placeholder="Image URL"
-              value={
-                isEditing && editTopic ? editTopic.imageUrl : newTopic.imageUrl
-              }
+              value={isEditing && editTopic ? editTopic.imageUrl : newTopic.imageUrl}
               onChange={handleInputChange}
-              className="mb-2 p-2 border text-gray-800"
+              className="mb-3 p-2 border rounded text-gray-800"
             />
             <input
               type="text"
               name="docsUrl"
               placeholder="Docs URL"
-              value={
-                isEditing && editTopic ? editTopic.docsUrl : newTopic.docsUrl
-              }
+              value={isEditing && editTopic ? editTopic.docsUrl : newTopic.docsUrl}
               onChange={handleInputChange}
-              className="mb-2 p-2 border text-gray-800"
+              className="mb-3 p-2 border rounded text-gray-800"
             />
             <input
               type="text"
               name="videoUrl"
               placeholder="Video URL"
-              value={
-                isEditing && editTopic ? editTopic.videoUrl : newTopic.videoUrl
-              }
+              value={isEditing && editTopic ? editTopic.videoUrl || '' : newTopic.videoUrl || ''}
               onChange={handleInputChange}
-              className="mb-2 p-2 border text-gray-800"
+              className="mb-4 p-2 border rounded text-gray-800"
             />
-            <button
-              onClick={isEditing ? handleEditTopic : handleAddTopic}
-              className="bg-blue-500 text-white p-2 mr-2"
-            >
-              {isEditing ? "Update Topic" : "Add Topic"}
-            </button>
-            <button
-              onClick={() => setShowModal(false)}
-              className="bg-gray-500 text-white p-2"
-            >
-              Cancel
-            </button>
+            <textarea
+              type="text"
+              name="content"
+              placeholder="Content"
+              value={isEditing && editTopic ? editTopic.content : newTopic.content}
+              onChange={handleInputChange}
+              className="mb-3 p-2 border rounded text-gray-800"
+            ></textarea>
+            <div className="flex justify-between">
+              <button
+                onClick={isEditing ? handleEditTopic : handleAddTopic}
+                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+              >
+                {isEditing ? "Update Topic" : "Add Topic"}
+              </button>
+              <button
+                onClick={() => setShowModal(false)}
+                className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {topics.length > 0 ? (
-        topics.map((topic) => (
-          <div
-            key={topic.id}
-            className="max-w-md mb-6 flex flex-col items-start justify-start"
-          >
-            <h2 className="text-3xl font-semibold mb-2">{topic.title}</h2>
-            <Image
-              width={200}
-              height={150}
-              src={topic.imageUrl}
-              alt={topic.title}
-              className=""
-            />
-            <p className="">{topic.content}</p>
-            <div className="mt-4">
-              <p className="my-3">View {topic.title} Documentation here:👇</p>
-              <a
-                href={topic.docsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 font-semibold hover:underline"
-              >
-                {topic.docsUrl}
-              </a>
-              <br />
-              <iframe
-                src={`https://www.youtube.com/embed/${new URL(
-                  topic.videoUrl
-                ).searchParams.get("v")}`}
-                width={500}
-                height={300}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                className="mt-2"
-                allowFullScreen
-              ></iframe>
-            </div>
-            <div className="mt-4">
-              {hasPermission("read:topics") && (
-                <button
-                  onClick={() => {
-                    setIsEditing(true);
-                    setEditTopic(topic);
-                    setShowModal(true); // Show the modal when editing
-                  }}
-                  className="bg-yellow-500 text-white p-2 mr-2"
-                >
-                  Edit
-                </button>
-              )}
-              {hasPermission("read:topics") && (
-                <button
-                  onClick={() => handleDeleteTopic(topic.id)}
-                  className="bg-red-500 text-white p-2"
-                >
-                  Delete
-                </button>
-              )}
-            </div>
+      topics.map((topic) => (
+        <div
+          key={topic.id}
+          className="min-w-smz mb-6 flex flex-col items-start justify-start mx-auto"
+        >
+          <h2 className="text-3xl font-semibold mb-2 text-center">{topic.title}</h2>
+          <div className="flex flex-col md:flex-row-reverse justify-center">
+          <Image
+  width={300}
+  height={400}
+  src={topic.imageUrl}
+  alt={topic.title}
+  className="object-cover w-full  rounded-sm mb-5 border md:ml-6"
+/>
+
+            <p className="text-justify mr-6">{topic.content}</p>
           </div>
-        ))
+          <div className="mt-4">
+            <p className="my-3 mb-4">View {topic.title} Documentation here:👇</p>
+            <a
+              href={topic.docsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mb-6 text-blue-500 font-semibold hover:underline"
+            >
+              {topic.docsUrl}
+            </a>
+            <br />
+            {topic.videoUrl && (
+              <div className="relative min-w-screen" style={{ paddingBottom: "56.25%" }}>
+                <iframe
+                  src={`https://www.youtube.com/embed/${extractYouTubeVideoID(topic.videoUrl)}`}
+                  className="absolute top-0 left-0 min-w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            )}
+          </div>
+          <div className="mt-4">
+            {hasPermission("read:topics") && (
+              <button
+                onClick={() => {
+                  setIsEditing(true);
+                  setEditTopic(topic);
+                  setShowModal(true);
+                }}
+                className="bg-yellow-500 text-white p-2 mr-2"
+              >
+                Edit
+              </button>
+            )}
+            {hasPermission("read:topics") && (
+              <button
+                onClick={() => handleDeleteTopic(topic.id)}
+                className="bg-red-500 text-white p-2"
+              >
+                Delete
+              </button>
+            )}
+          </div>
+        </div>
+      ))
+      
       ) : (
         <p>No topics available</p>
       )}

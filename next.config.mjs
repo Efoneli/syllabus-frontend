@@ -10,6 +10,9 @@ const nextConfig = {
         "banner2.cleanpng.com",
         "pbs.twimg.com",
         's.gravatar.com',
+        "static-00.iconduck.com",
+        "cdn.iconscout.com",
+        "youtu.be",
       ],
     },
   };

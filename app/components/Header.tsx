@@ -36,7 +36,7 @@ console.log(user)
                   />
                 )}
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 py-2 min-w-lg bg-white border border-gray-300 rounded shadow-lg">
+                  <div className="absolute right-0 mt-2 py-2 min-w-lg bg-white border border-gray-300 rounded shadow-lg z-50">
                     <div className="px-4 py-2">
                       <p className="font-semibold text-gray-500">{user.name}</p>
                       <p className="font-semibold text-black">{user.email}</p>
@@ -52,14 +52,7 @@ console.log(user)
                 )}
               </div>
             )}
-            {/* {!isLoading && !user && (
-              <Link
-                href="/api/auth/login"
-                className="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded"
-              >
-                Login
-              </Link>
-            )} */}
+           
           </div>
         </div>
       </header>

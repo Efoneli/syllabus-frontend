@@ -1,3 +1,5 @@
+
+
 // "use client";
 
 // import { useState, useEffect } from "react";
@@ -6,6 +8,9 @@
 // import Image from "next/image";
 // import { useParams } from "next/navigation";
 // import placeholder from "../../../../assets/placeholder.jpg";
+// import { jwtDecode } from "jwt-decode";
+// import { hasPermission } from "../../../../utils";
+// import { CiCirclePlus } from "react-icons/ci";
 
 // interface Course {
 //   id: number;
@@ -25,57 +30,274 @@
 
 // export default function CategoryDetails() {
 //   const params = useParams();
-//   const categoryId = Array.isArray(params.categoryId) ? params.categoryId[0] : params.categoryId;
-//   const [category, setCategory] = useState<Category | null>(null);
+//   const categoryId = Array.isArray(params.categoryId)
+//     ? params.categoryId[0]
+//     : params.categoryId;
+//   const [category, setCategory] = useState<Category>({
+//     id: 0,
+//     name: "",
+//     courses: [],
+//   });
+//   const [newCourse, setNewCourse] = useState<Course>({
+//     id: 0,
+//     title: "",
+//     prerequisites: "",
+//     imageUrl: "",
+//     description: "",
+//     categoryId: parseInt(categoryId),
+//     courseId: 0,
+//   });
+//   const [isEditing, setIsEditing] = useState(false);
+//   const [editCourse, setEditCourse] = useState<Course | null>(null);
+//   const [showModal, setShowModal] = useState(false);
+//   const [permissions, setPermissions] = useState<string[]>([]);
 
 //   useEffect(() => {
 //     (async () => {
-//       try {
-//         const response = await axios.get(`http://localhost:3030/categories/${categoryId}`);
-//         setCategory(response.data);
-//       } catch (error) {
-//         console.error(error);
-//       }
+//       const response = await axios.get(
+//         `http://localhost:3030/categories/${categoryId}`,
+//         {
+//           headers: {
+//             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+//           },
+//         }
+//       );
+//       console.log(response.data, "you are permitted");
+//       setCategory(response?.data);
+//       const res = await axios.get("/api/auth/me");
+//       console.log(res.data, "from me");
 //     })();
 //   }, [categoryId]);
 
+//   // useEffect(() => {
+//   //   const token = localStorage.getItem('accessToken');
+//   //   if (token) {
+//   //     const decodedToken = jwtDecode<{ permissions: string[] }>(token);
+//   //     setPermissions(decodedToken.permissions || []);
+//   //   }
+//   // }, []);
+
+//   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const { name, value } = e.target;
+//     if (isEditing && editCourse) {
+//       setEditCourse({ ...editCourse, [name]: value });
+//     } else {
+//       setNewCourse({ ...newCourse, [name]: value });
+//     }
+//   };
+
+//   const handleAddCourse = async () => {
+//     try {
+//       const response = await axios.post(
+//         "http://localhost:3030/courses",
+//         newCourse,
+//         {
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+//           },
+//         }
+//       );
+//       const addedCourse = response.data;
+//       setCategory((prevCategory: Category) => ({
+//         ...prevCategory,
+//         courses: [...prevCategory.courses, addedCourse],
+//       }));
+//       setNewCourse({
+//         id: 0,
+//         title: "",
+//         prerequisites: "",
+//         imageUrl: "",
+//         description: "",
+//         categoryId: parseInt(categoryId),
+//         courseId: 0,
+//       });
+//       setShowModal(false); // Close the modal after adding the course
+//     } catch (error) {
+//       console.log(error, "error");
+//     }
+//   };
+
+//   const handleEditCourse = async () => {
+//     console.log(editCourse.id);
+//     if (editCourse) {
+//       try {
+//         const response = await axios.patch(
+//           `http://localhost:3030/courses/${editCourse.id}`,
+//           editCourse,
+//           {
+//             headers: {
+//               "Content-Type": "application/json",
+//               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+//             },
+//           }
+//         );
+//         const updatedCourse = response.data;
+//         setCategory(
+//           category.courses.map((course) => {
+//             if (course.id === updatedCourse.id) {
+//               return updatedCourse;
+//             }
+//             return course;
+//           })
+//         );
+//         setEditCourse(null);
+//         setIsEditing(false);
+//       } catch (error) {
+//         console.log(error, "error");
+//       }
+//     }
+//   };
+
+//   const handleDeleteCourse = async (id: number) => {
+//     try {
+//       await axios.delete(`http://localhost:3030/courses/${id}`, {
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+//         },
+//       });
+//       setCategory((prevCategory: Category) => ({
+//         ...prevCategory,
+//         courses: prevCategory.courses.filter((course) => course.id !== id),
+//       }));
+//     } catch (error) {
+//       console.log(error, "error");
+//     }
+//   };
+
 //   return (
-//     <div className="min-h-screen w-full h-full flex flex-col items-center p-4">
-//       {category ? (
-//         <>
-//           <h2 className="text-2xl font-bold text-gray-700 mb-4">Courses for {category.name}</h2>
-//           {category.courses.length > 0 ? (
-//             <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-//               {category.courses.map((course: Course) => (
-//                 <li key={course.courseId} className="bg-white rounded-lg shadow-lg p-4">
-//                                     <Link href={`/user/user_dashboard/categories/${categoryId}/courses/${course.id}`} passHref>
-//                   <Image
-//                     width={200}
-//                     height={150}
-//                     src={course.imageUrl || placeholder}
-//                     alt={course.title}
-//                     className="w-full"
-//                   />
-//                     <div>
-//                       <h3 className="text-xl font-semibold text-gray-700 mt-2">{course.title}</h3>
-//                       <p className="text-gray-700 mt-1">{course.description}</p>
-//                       <p className="text-gray-500 mt-1">Prerequisites: {course.prerequisites}</p>
-//                     </div>
-//                   </Link>
-//                   {/* <Ratings courseId={course.courseId} /> */}
-//                 </li>
-//               ))}
-//             </ul>
-//           ) : (
-//             <p>No courses available for this category.</p>
-//           )}
-//         </>
+//     <div className="bg-white min-h-screen w-full h-full flex flex-col items-center p-4 relative">
+//       <h2 className="text-2xl font-bold mb-4">Courses for {category?.name}</h2>
+//       {hasPermission("read:courses") && (
+//         <button
+//         className="absolute top-4 right-4 py-1.5 px-3 rounded"
+//           onClick={() => setShowModal(true)}
+//         >
+//           <span className="text-4xl text-gray-900">
+//             <CiCirclePlus />
+//           </span>
+//         </button>
+//       )}
+
+//       {showModal && (
+//     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center p-4 sm:p-6">
+//     <div className="bg-white p-4 sm:p-6 flex flex-col rounded-lg shadow-lg w-full max-w-md sm:max-w-lg">
+//       <h2 className="text-xl sm:text-2xl font-bold mb-4 text-center">
+//         {isEditing ? "Edit Course" : "Add New Course"}
+//       </h2>
+//       <input
+//         type="text"
+//         name="title"
+//         placeholder="Title"
+//         value={isEditing && editCourse ? editCourse.title : newCourse.title}
+//         onChange={handleInputChange}
+//         className="mb-3 p-2 border rounded text-gray-800"
+//       />
+//       <input
+//         type="text"
+//         name="prerequisites"
+//         placeholder="Prerequisites"
+//         value={isEditing && editCourse ? editCourse.prerequisites : newCourse.prerequisites}
+//         onChange={handleInputChange}
+//         className="mb-3 p-2 border rounded text-gray-800"
+//       />
+//       <input
+//         type="text"
+//         name="imageUrl"
+//         placeholder="Image URL"
+//         value={isEditing && editCourse ? editCourse.imageUrl : newCourse.imageUrl}
+//         onChange={handleInputChange}
+//         className="mb-3 p-2 border rounded text-gray-800"
+//       />
+//       <textarea
+//         type="text"
+//         name="description"
+//         placeholder="Description"
+//         value={isEditing && editCourse ? editCourse.description : newCourse.description}
+//         onChange={handleInputChange}
+//         className="mb-4 p-2 border rounded text-gray-800"
+//       ></textarea>
+//       <div className="flex justify-between">
+//         <button
+//           onClick={isEditing ? handleEditCourse : handleAddCourse}
+//           className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+//         >
+//           {isEditing ? "Update Course" : "Add Course"}
+//         </button>
+//         <button
+//           onClick={() => setShowModal(false)}
+//           className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600"
+//         >
+//           Cancel
+//         </button>
+//       </div>
+//     </div>
+//   </div>
+  
+//       )}
+
+//       {category?.courses?.length > 0 ? (
+//         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+//           {category?.courses.map((course) => (
+//             <li
+//               key={course.courseId}
+//               className="bg-white rounded-lg shadow-lg p-4"
+//             >
+//               <Link
+//                 href={`/user/user_dashboard/categories/${categoryId}/courses/${course.id}`}
+//                 passHref
+//               >
+//                 <Image
+//                   width={200}
+//                   height={150}
+//                   src={course.imageUrl || placeholder}
+//                   alt={course.title}
+//                   className="w-full"
+//                 />
+//                 <div>
+//                   <h3 className="text-gray-800 text-xl font-semibold mt-2">
+//                     {course.title}
+//                   </h3>
+//                   <p className="text-gray-700 mt-1">{course.description}</p>
+//                   <p className="text-gray-500 mt-1">
+//                     Prerequisites: {course.prerequisites}
+//                   </p>
+//                 </div>
+//               </Link>
+//               <div className="mt-4">
+//                 {hasPermission("read:courses") && (
+//                   <button
+//                     onClick={() => {
+//                       setIsEditing(true);
+//                       setEditCourse(course);
+//                       setShowModal(true); // Show the modal when editing
+//                     }}
+//                     className="bg-yellow-500 text-white p-2 mr-2"
+//                   >
+//                     Edit
+//                   </button>
+//                 )}
+//                 {hasPermission("read:courses") && (
+//                   <button
+//                     onClick={() => handleDeleteCourse(course.id)}
+//                     className="bg-red-500 text-white p-2"
+//                   >
+//                     Delete
+//                   </button>
+//                 )}
+//               </div>
+//             </li>
+//           ))}
+//         </ul>
 //       ) : (
-//         <p>Loading...</p>
+//         <p>No courses available for this category.</p>
 //       )}
 //     </div>
 //   );
 // }
+
+
 
 
 
@@ -88,8 +310,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import placeholder from "../../../../assets/placeholder.jpg";
-import {jwtDecode} from 'jwt-decode';
-import {hasPermission} from '../../../../utils'
+import { CiCirclePlus } from "react-icons/ci";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { hasPermission } from "../../../../utils";
+
 
 interface Course {
   id: number;
@@ -109,8 +334,14 @@ interface Category {
 
 export default function CategoryDetails() {
   const params = useParams();
-  const categoryId = Array.isArray(params.categoryId) ? params.categoryId[0] : params.categoryId;
-  const [category, setCategory] = useState<Category>({ id: 0, name: '', courses: [] });
+  const categoryId = Array.isArray(params.categoryId)
+    ? params.categoryId[0]
+    : params.categoryId;
+  const [category, setCategory] = useState<Category>({
+    id: 0,
+    name: "",
+    courses: [],
+  });
   const [newCourse, setNewCourse] = useState<Course>({
     id: 0,
     title: "",
@@ -127,29 +358,30 @@ export default function CategoryDetails() {
 
   useEffect(() => {
     (async () => {
-      const response = await axios.get(
-        `http://localhost:3030/categories/${categoryId}`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+      try {
+        const response = await axios.get(
+          `http://localhost:3030/categories/${categoryId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
           }
-        }
-      );
-      console.log(response.data, 'you are permitted')
-      setCategory(response?.data);
-      const res = await axios.get('/api/auth/me')
-      console.log(res.data, 'from me')
+        );
+        setCategory(response?.data);
+
+        const res = await axios.get("/api/auth/me", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        });
+        setPermissions(res.data.permissions);
+      } catch (error) {
+        console.error(error);
+      }
     })();
   }, [categoryId]);
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem('accessToken');
-  //   if (token) {
-  //     const decodedToken = jwtDecode<{ permissions: string[] }>(token);
-  //     setPermissions(decodedToken.permissions || []);
-  //   }
-  // }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     if (isEditing && editCourse) {
       setEditCourse({ ...editCourse, [name]: value });
@@ -162,11 +394,12 @@ export default function CategoryDetails() {
     try {
       const response = await axios.post(
         "http://localhost:3030/courses",
-        newCourse, {
+        newCourse,
+        {
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-          }, 
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
         }
       );
       const addedCourse = response.data;
@@ -183,42 +416,41 @@ export default function CategoryDetails() {
         categoryId: parseInt(categoryId),
         courseId: 0,
       });
-      setShowModal(false); // Close the modal after adding the course
+      setShowModal(false);
+      toast.success("Course added successfully!");
     } catch (error) {
-      console.log(error, "error");
+      console.error(error);
+      toast.error("Failed to add course.");
     }
   };
 
   const handleEditCourse = async () => {
-    console.log(editCourse.id)
     if (editCourse) {
       try {
         const response = await axios.patch(
           `http://localhost:3030/courses/${editCourse.id}`,
-          editCourse, {
+          editCourse,
+          {
             headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-            }, 
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
           }
         );
         const updatedCourse = response.data;
-        setCategory(category.courses.map(course => {
-          if(course.id === updatedCourse.id) {
-            return updatedCourse
-          }
-          return course
-        }))
-        // setCategory((prevCategory: Category) => ({
-        //   ...prevCategory,
-        //   courses: prevCategory.courses.map((course) =>
-        //     course.id === updatedCourse.id ? updatedCourse : course
-        //   ),
-        // }));
+        setCategory((prevCategory) => ({
+          ...prevCategory,
+          courses: prevCategory.courses.map((course) =>
+            course.id === updatedCourse.id ? updatedCourse : course
+          ),
+        }));
         setEditCourse(null);
         setIsEditing(false);
+        setShowModal(false);
+        toast.success("Course updated successfully!");
       } catch (error) {
-        console.log(error, "error");
+        console.error(error);
+        toast.error("Failed to update course.");
       }
     }
   };
@@ -227,96 +459,117 @@ export default function CategoryDetails() {
     try {
       await axios.delete(`http://localhost:3030/courses/${id}`, {
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        }, 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
       });
       setCategory((prevCategory: Category) => ({
         ...prevCategory,
         courses: prevCategory.courses.filter((course) => course.id !== id),
       }));
+      toast.success("Course deleted successfully!");
     } catch (error) {
-      console.log(error, "error");
+      console.error(error);
+      toast.error("Failed to delete course.");
     }
   };
 
- 
+  const handleDeleteClick = (courseId: number) => {
+    toast.warn(
+      <div>
+        <p>Do you want to delete this course?</p>
+        <div className="flex justify-end space-x-2 mt-2">
+          <button
+            onClick={() => {
+              handleDeleteCourse(courseId);
+              toast.dismiss();
+            }}
+            className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600"
+          >
+            Yes
+          </button>
+          <button
+            onClick={() => toast.dismiss()}
+            className="bg-gray-500 text-white py-1 px-3 rounded hover:bg-gray-600"
+          >
+            No
+          </button>
+        </div>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+      }
+    );
+  };
+
   return (
     <div className="bg-white min-h-screen w-full h-full flex flex-col items-center p-4 relative">
       <h2 className="text-2xl font-bold mb-4">Courses for {category?.name}</h2>
-      {hasPermission('read:courses') && (
+      {hasPermission("read:courses") && (
         <button
-          className="absolute top-4 right-4 bg-blue-500 text-white p-2 rounded-full"
+          className="absolute top-4 right-4 py-1.5 px-3 rounded"
           onClick={() => setShowModal(true)}
         >
-          <span className="text-xl py-1.5 px-3">+</span>
+          <span className="text-4xl text-gray-900">
+            <CiCirclePlus />
+          </span>
         </button>
       )}
 
       {showModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white p-6 flex flex-col rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-2">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center p-4 sm:p-6">
+          <div className="bg-white p-4 sm:p-6 flex flex-col rounded-lg shadow-lg w-full max-w-md sm:max-w-lg">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-center">
               {isEditing ? "Edit Course" : "Add New Course"}
             </h2>
             <input
               type="text"
               name="title"
               placeholder="Title"
-              value={
-                isEditing && editCourse ? editCourse.title : newCourse.title
-              }
+              value={isEditing && editCourse ? editCourse.title : newCourse.title}
               onChange={handleInputChange}
-              className="mb-2 p-2 border text-gray-800"
+              className="mb-3 p-2 border rounded text-gray-800"
             />
             <input
               type="text"
               name="prerequisites"
               placeholder="Prerequisites"
-              value={
-                isEditing && editCourse
-                  ? editCourse.prerequisites
-                  : newCourse.prerequisites
-              }
+              value={isEditing && editCourse ? editCourse.prerequisites : newCourse.prerequisites}
               onChange={handleInputChange}
-              className="mb-2 p-2 border text-gray-800"
+              className="mb-3 p-2 border rounded text-gray-800"
             />
             <input
               type="text"
               name="imageUrl"
               placeholder="Image URL"
-              value={
-                isEditing && editCourse
-                  ? editCourse.imageUrl
-                  : newCourse.imageUrl
-              }
+              value={isEditing && editCourse ? editCourse.imageUrl : newCourse.imageUrl}
               onChange={handleInputChange}
-              className="mb-2 p-2 border text-gray-800"
+              className="mb-3 p-2 border rounded text-gray-800"
             />
-            <input
-              type="text"
+            <textarea
               name="description"
               placeholder="Description"
-              value={
-                isEditing && editCourse
-                  ? editCourse.description
-                  : newCourse.description
-              }
+              value={isEditing && editCourse ? editCourse.description : newCourse.description}
               onChange={handleInputChange}
-              className="mb-2 p-2 border text-gray-800"
-            />
-            <button
-              onClick={isEditing ? handleEditCourse : handleAddCourse}
-              className="bg-blue-500 text-white p-2 mr-2"
-            >
-              {isEditing ? "Update Course" : "Add Course"}
-            </button>
-            <button
-              onClick={() => setShowModal(false)}
-              className="bg-gray-500 text-white p-2"
-            >
-              Cancel
-            </button>
+              className="mb-4 p-2 border rounded text-gray-800"
+            ></textarea>
+            <div className="flex justify-between">
+              <button
+                onClick={isEditing ? handleEditCourse : handleAddCourse}
+                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+              >
+                {isEditing ? "Update Course" : "Add Course"}
+              </button>
+              <button
+                onClick={() => setShowModal(false)}
+                className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -326,21 +579,22 @@ export default function CategoryDetails() {
           {category?.courses.map((course) => (
             <li
               key={course.courseId}
-              className="bg-white rounded-lg shadow-lg p-4"
+              className="bg-white rounded-lg shadow-lg p-4 flex flex-col justify-between"
             >
               <Link
-                href={`/admin/admin_dashboard/categories/${categoryId}/courses/${course.id}`}
+                href={`/user/user_dashboard/categories/${categoryId}/courses/${course.id}`}
                 passHref
               >
                 <Image
                   width={200}
-                  height={150}
+                  height={100}
                   src={course.imageUrl || placeholder}
                   alt={course.title}
-                  className="w-full"
+                  className="w-full h-[200px] object-cover"
                 />
+
                 <div>
-                  <h3 className="text-gray-800 text-xl font-semibold mt-2">
+                  <h3 className="text-gray-800 text-xl font-semibold mt-2 capitalize">
                     {course.title}
                   </h3>
                   <p className="text-gray-700 mt-1">{course.description}</p>
@@ -349,23 +603,23 @@ export default function CategoryDetails() {
                   </p>
                 </div>
               </Link>
-              <div className="mt-4">
-                {hasPermission('read:courses') && (
+              <div className="mt-4 flex justify-end space-x-2">
+                {hasPermission("read:courses") && (
                   <button
                     onClick={() => {
                       setIsEditing(true);
                       setEditCourse(course);
                       setShowModal(true); // Show the modal when editing
                     }}
-                    className="bg-yellow-500 text-white p-2 mr-2"
+                    className="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600"
                   >
                     Edit
                   </button>
                 )}
-                {hasPermission('read:courses') && (
+                {hasPermission("read:courses") && (
                   <button
-                    onClick={() => handleDeleteCourse(course.id)}
-                    className="bg-red-500 text-white p-2"
+                    onClick={() => handleDeleteClick(course.id)}
+                    className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
                   >
                     Delete
                   </button>
