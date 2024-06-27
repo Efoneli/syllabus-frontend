@@ -150,7 +150,7 @@ function Navbar({ children }: NavbarProps) {
         </div>
       </aside>
 
-      <div className="bg-[#f5f5f5] min-h-screen ml-0 md:ml-64">
+      <div className="bg-gray-800 ml-0 md:ml-64">
         {children}
       </div>
     </div>
