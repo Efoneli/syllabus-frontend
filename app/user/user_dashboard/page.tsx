@@ -1,6 +1,4 @@
 
-import { Suspense } from "react";
-import UserProfile from "../../components/user-profile";
 import { Carousel } from "flowbite-react";
 import arif from "../../assets/arif.jpg";
 import brook from "../../assets/brook.jpg";
