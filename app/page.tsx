@@ -2,7 +2,12 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import {jwtDecode} from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
+
+interface MyToken {
+  name: string;
+  exp: number;
+}
 
 export default function Home() {
   const router = useRouter();
@@ -32,7 +37,7 @@ export default function Home() {
           localStorage.setItem('accessToken', data.accessToken);
 
           // Decode the JWT token to get the user's permissions
-          const decodedToken = jwtDecode(data.accessToken);
+          const decodedToken = jwtDecode<MyToken>(data.accessToken);
           const userPermissions = decodedToken?.permissions || [];
           // setPermissions(userPermissions);
           localStorage.setItem('permissions', JSON.stringify(userPermissions));
@@ -73,7 +78,7 @@ export default function Home() {
     //   router.replace('/api/auth/login');
     // }
     
-  }, [user]);
+  }, [user, router]);
 
 
   if (isLoading) {
@@ -183,3 +188,9 @@ export default function Home() {
     </main>
   );
 }
+
+
+
+
+
+
