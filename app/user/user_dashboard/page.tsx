@@ -9,16 +9,14 @@ import Image from "next/image";
 
 export default async function DashbaordPage() {
   return (
-    <div>
-      <div className='bg-[#f5f5f5] border-b border-gray-900'>
-     
-      </div>
+    <div className='min-h-screen'>
+    
       <div className="p-12">
         <div>
-          <h1 className="text-3xl font-semibold  mb-4 text-gray-800">
+          <h1 className="text-3xl font-semibold  mb-4 text-gray-200">
             Welcome to WDAT Syllabus{" "}
           </h1>
-          <p className="text-md mb-4 text-gray-700">
+          <p className="text-md mb-4 text-gray-200">
             Empower your learning journey with our comprehensive web development
             syllabus app. Whether you&apos;re a student, educator, or lifelong
             learner, WDAT is here to streamline your study experience and help
@@ -36,7 +34,7 @@ export default async function DashbaordPage() {
             <Image height={300} width={300} src={window} alt="..." />
           </Carousel>
         </div>
-      </div>{" "}
+      </div>
     </div>
   );
 }

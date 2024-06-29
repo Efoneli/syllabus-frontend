@@ -200,6 +200,7 @@ export default function CourseDetail() {
   };
 
   return (
+    <div className='min-h-screen'>
     <div className="p-6 min-w-lg min-h-screen relative ">
       <div className='w-[50%] shadow-lg shadow-black rounded-lg p-3'>
         {hasPermission("read:topics") && (
@@ -375,6 +376,7 @@ export default function CourseDetail() {
       </div>
 
       )}
+    </div>
     </div>
   );
 }
