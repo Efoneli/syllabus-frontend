@@ -57,7 +57,7 @@
       (async () => {
         try {
           const response = await axios.get(
-            `http://localhost:3030/categories/${categoryId}`,
+            `http://13.36.122.171/categories/${categoryId}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
@@ -83,7 +83,7 @@
       const fetchCompletedCourses = async () => {
         try {
           const response = await axios.get<number[]>(
-            `http://localhost:3030/feedback/completed/${userEmail}`
+            `http://13.36.122.171/feedback/completed/${userEmail}`
           );
           console.log('API Response: ', response.data); // Debugging line
           setCompletedCourses(response.data);
@@ -111,7 +111,7 @@
     const handleAddCourse = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:3030/courses",
+          "http://13.36.122.171/courses",
           newCourse,
           {
             headers: {
@@ -146,7 +146,7 @@
       if (editCourse) {
         try {
           const response = await axios.patch(
-            `http://localhost:3030/courses/${editCourse.id}`,
+            `http://13.36.122.171/courses/${editCourse.id}`,
             editCourse,
             {
               headers: {
@@ -175,7 +175,7 @@
 
     const handleDeleteCourse = async (id: number) => {
       try {
-        await axios.delete(`http://localhost:3030/courses/${id}`, {
+        await axios.delete(`http://13.36.122.171/courses/${id}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

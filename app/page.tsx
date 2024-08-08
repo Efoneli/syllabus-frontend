@@ -36,7 +36,7 @@ export default function Home() {
           localStorage.setItem('permissions', JSON.stringify(userPermissions));
 
           // Create user in backend
-          return fetch('http://localhost:3030/users', {
+          return fetch('http://13.36.122.171/users', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -181,7 +181,6 @@ export default function Home() {
     </main>
   );
 }
-
 
 
 

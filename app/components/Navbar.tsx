@@ -46,7 +46,7 @@ function Navbar({ children }: NavbarProps) {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3030/categories")
+      .get("http://13.36.122.171/categories")
       .then((response) => {
         setCategories(response.data);
         console.log("category Data:", response.data);

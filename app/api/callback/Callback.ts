@@ -45,7 +45,7 @@ export default async function callback(req: NextApiRequest, res: NextApiResponse
       const user = session.user;
 
       // Call your backend API to save the user details
-      await fetch('http://localhost:3030/users', {
+      await fetch('http://13.36.122.171/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

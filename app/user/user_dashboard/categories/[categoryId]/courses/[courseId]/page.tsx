@@ -63,7 +63,7 @@ export default function CourseDetail() {
   useEffect(() => {
     const fetchTopics = async () => {
       try {
-        const response = await axios.get<Topic[]>("http://localhost:3030/topics", {
+        const response = await axios.get<Topic[]>("http://13.36.122.171/topics", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
@@ -99,7 +99,7 @@ export default function CourseDetail() {
 
   const handleAddTopic = async () => {
     try {
-      const response = await axios.post("http://localhost:3030/topics", newTopic, {
+      const response = await axios.post("http://13.36.122.171/topics", newTopic, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -123,7 +123,7 @@ export default function CourseDetail() {
   const handleEditTopic = async () => {
     if (editTopic) {
       try {
-        const response = await axios.patch(`http://localhost:3030/topics/${editTopic.id}`, editTopic, {
+        const response = await axios.patch(`http://13.36.122.171/topics/${editTopic.id}`, editTopic, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -149,7 +149,7 @@ export default function CourseDetail() {
 
   const handleDeleteTopic = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:3030/topics/${id}`);
+      await axios.delete(`http://13.36.122.171/topics/${id}`);
       setTopics(topics.filter((topic) => topic.id !== id));
     } catch (error) {
       console.log(error, "error");
@@ -180,7 +180,7 @@ export default function CourseDetail() {
       feedback: feedback,
     };
     try {
-      await axios.post("http://localhost:3030/feedback", feedbackData, {
+      await axios.post("http://13.36.122.171/feedback", feedbackData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

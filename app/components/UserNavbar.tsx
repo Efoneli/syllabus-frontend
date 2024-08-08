@@ -1,11 +1,10 @@
-
 "use client";
 
 import React, { ReactNode, useState, useEffect, Suspense } from "react";
 import axios from "axios";
 import { CiMenuFries } from "react-icons/ci";
 import { useRouter } from "next/navigation";
-import Link from 'next/link'
+import Link from "next/link";
 import UserProfile from "./user-profile";
 import Header from "./Header";
 
@@ -49,7 +48,7 @@ function Navbar({ children }: NavbarProps) {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3030/categories")
+      .get("http://13.36.122.171/categories")
       .then((response) => {
         setCategories(response.data);
         console.log("category Data:", response.data);
@@ -61,8 +60,7 @@ function Navbar({ children }: NavbarProps) {
 
   return (
     <div>
-
-<Suspense fallback="Loading user!!!">
+      <Suspense fallback="Loading user!!!">
         <Header />
       </Suspense>
 
@@ -100,20 +98,24 @@ function Navbar({ children }: NavbarProps) {
                 className="flex items-center p-2 text-gray-200 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
                 <InboxSvg />
-                <span className="flex-1 ms-3 whitespace-nowrap">Notification</span>
+                <span className="flex-1 ms-3 whitespace-nowrap">
+                  Notification
+                </span>
                 <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">
                   0
                 </span>
               </Link>
             </li>
-         
+
             <li>
               <div
                 onClick={toggleCategoryMenu}
                 className="flex items-center p-2 text-gray-200 rounded-lg dark:text-white group cursor-pointer"
               >
                 <CourseSvg />
-                <span className="flex-1 ms-3 whitespace-nowrap">Categories</span>
+                <span className="flex-1 ms-3 whitespace-nowrap">
+                  Categories
+                </span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className={`h-5 w-5 transition-transform ${
@@ -130,7 +132,11 @@ function Navbar({ children }: NavbarProps) {
                 </svg>
               </div>
               {/* Dropdown menu for categories */}
-              <ul className={`${isCategoryOpen ? "block" : "hidden"} space-y-2 ml-3`}>
+              <ul
+                className={`${
+                  isCategoryOpen ? "block" : "hidden"
+                } space-y-2 ml-3`}
+              >
                 {categories.map((category, index) => (
                   <li key={index}>
                     <Link
@@ -145,14 +151,11 @@ function Navbar({ children }: NavbarProps) {
                 ))}
               </ul>
             </li>
-         
           </ul>
         </div>
       </aside>
 
-      <div className="bg-gray-800 ml-0 md:ml-64">
-        {children}
-      </div>
+      <div className="bg-gray-800 ml-0 md:ml-64">{children}</div>
     </div>
   );
 }
