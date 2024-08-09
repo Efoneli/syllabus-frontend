@@ -49,8 +49,8 @@ function Navbar({ children }: NavbarProps) {
   useEffect(() => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     axios
-      // .get(`${API_URL}/categories`)
-      .get('http://localhost:3030/categories')
+      .get(`${API_URL}/categories`)
+      // .get('http://localhost:3030/categories')
       .then((response) => {
         setCategories(response.data);
         console.log("category Data:", response.data);
