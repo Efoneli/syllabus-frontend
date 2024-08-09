@@ -15,6 +15,7 @@ export default function Home() {
   };
 
   useEffect(() => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
     if (user !== undefined && Object.keys(user).length !== 0) {
       console.log("User authenticated with Auth0");
 
@@ -36,7 +37,7 @@ export default function Home() {
           localStorage.setItem('permissions', JSON.stringify(userPermissions));
 
           // Create user in backend
-          return fetch('http://13.36.122.171/users', {
+          return fetch(`${API_URL}/users`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

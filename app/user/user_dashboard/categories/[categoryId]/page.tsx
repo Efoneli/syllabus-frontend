@@ -52,12 +52,13 @@
     const [permissions, setPermissions] = useState<string[]>([]);
     const [completedCourses, setCompletedCourses] = useState<number[]>([]);
     const [userEmail, setUserEmail] = useState<string>('');
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
     useEffect(() => {
       (async () => {
         try {
           const response = await axios.get(
-            `http://13.36.122.171/categories/${categoryId}`,
+            `${API_URL}/categories/${categoryId}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
@@ -83,7 +84,7 @@
       const fetchCompletedCourses = async () => {
         try {
           const response = await axios.get<number[]>(
-            `http://13.36.122.171/feedback/completed/${userEmail}`
+            `${API_URL}/feedback/completed/${userEmail}`
           );
           console.log('API Response: ', response.data); // Debugging line
           setCompletedCourses(response.data);
@@ -111,7 +112,7 @@
     const handleAddCourse = async () => {
       try {
         const response = await axios.post(
-          "http://13.36.122.171/courses",
+          `${API_URL}/courses`,
           newCourse,
           {
             headers: {
@@ -146,7 +147,7 @@
       if (editCourse) {
         try {
           const response = await axios.patch(
-            `http://13.36.122.171/courses/${editCourse.id}`,
+            `${API_URL}/courses/${editCourse.id}`,
             editCourse,
             {
               headers: {
@@ -175,7 +176,7 @@
 
     const handleDeleteCourse = async (id: number) => {
       try {
-        await axios.delete(`http://13.36.122.171/courses/${id}`, {
+        await axios.delete(`${API_URL}/courses/${id}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
