@@ -27,6 +27,8 @@
     courses: Course[];
   }
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
   export default function CategoryDetails() {
     const params = useParams();
     const categoryId = Array.isArray(params.categoryId)
@@ -52,7 +54,6 @@
     const [permissions, setPermissions] = useState<string[]>([]);
     const [completedCourses, setCompletedCourses] = useState<number[]>([]);
     const [userEmail, setUserEmail] = useState<string>('');
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
     useEffect(() => {
       (async () => {

@@ -17,6 +17,9 @@ interface Category {
   name: string;
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+
 function Navbar({ children }: NavbarProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -47,7 +50,6 @@ function Navbar({ children }: NavbarProps) {
   };
 
   useEffect(() => {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
     axios
       .get(`${API_URL}/categories`)
       // .get('http://localhost:3030/categories')
